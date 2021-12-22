@@ -73,6 +73,10 @@ def get_access_token():
         data={
             "refresh_token": constants.REFRESH_TOKEN,
             "grant_type": "refresh_token",
+            "client_id": constants.CLIENT_ID,
+            "client_secret": constants.CLIENT_SECRET,
         },
     )
+    if not response.ok:
+        raise RuntimeError("Could not obtain token: ", response.content)
     return response.json()["access_token"]
