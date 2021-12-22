@@ -1,7 +1,5 @@
 import os
 import requests
-import threading
-import time
 import urllib.parse
 import webbrowser
 
