@@ -8,6 +8,12 @@ from tracks import Track
 import models
 
 
+def list_users():
+    users = models.get_all_entries()
+    for user in users:
+        print(user)
+
+
 def generate_playlists():
     users = models.get_all_entries()
     for user in users:

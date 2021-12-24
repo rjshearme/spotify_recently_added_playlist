@@ -27,7 +27,7 @@ def auth():
 @app.route("/callback")
 def callback():
     if request.args.get("state") != constants.STATE:
-        raise RuntimeError("Invalid state from authorization")
+        return "Sorry, your authorisation couldn't be verified. Please try logging in again", 400
     auth_token = request.args.get("code")
     refresh_token = exchange_auth_token_for_refresh_token(auth_token)
     user_id = models.create_user(refresh_token)
