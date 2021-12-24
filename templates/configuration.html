@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}">
+    <title>Config | Edit</title>
+</head>
+<body>
+    <div id="content">
+        <div> How many days of recently liked music <br> would you like your playlist to include?</div>
+        <hr class="underline">
+        <form action="{{ url_for('configuration', user_id=user_id) }}" method="post">
+            <input id="recently_added_delta_days" type="number" name="recently_added_delta_days">
+            <input id="submit" type="submit">
+        </form>
+    </div>
+</body>
+</html>

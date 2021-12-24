@@ -1,16 +1,15 @@
-import os
 import requests
 import urllib.parse
-import webbrowser
 
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, url_for, render_template
 
 import constants
+import models
 
 app = Flask(__name__)
 
 
-@app.route("/auth")
+@app.route("/")
 def auth():
     vars_ = {
         "response_type": "code",
@@ -23,34 +22,24 @@ def auth():
     return redirect(redirect_url, 302)
 
 
-def shutdown_server():
-    func = request.environ.get("werkzeug.server.shutdown")
-    if func is None:
-        raise RuntimeError("Not running with the Werkzeug Server")
-    func()
-
-
 @app.route("/callback")
 def callback():
     if request.args.get("state") != constants.STATE:
         raise RuntimeError("Invalid state from authorization")
-    code = request.args.get("code")
-    os.environ["AUTH_TOKEN"] = code
-    shutdown_server()
-    return "Authorization successful"
-
-
-def get_refresh_token():
-    auth_token = get_auth_token()
+    auth_token = request.args.get("code")
     refresh_token = exchange_auth_token_for_refresh_token(auth_token)
-    print("\nRefresh_token: ", refresh_token)
+    user_id = models.create_user(refresh_token)
+    return redirect(url_for("configuration", user_id=user_id))
 
 
-def get_auth_token():
-    webbrowser.open("http://127.0.0.1:8080/auth")
-    app.run(port=8080)
-    auth_token = os.environ.get("AUTH_TOKEN")
-    return auth_token
+@app.route("/configuration/<user_id>", methods=["GET", "POST"])
+def configuration(user_id):
+    if request.method == "GET":
+        return render_template("configuration.html", user_id=user_id)
+    elif request.method == "POST":
+        recently_added_delta_days = request.form.get("recently_added_delta_days")
+        user = models.update_user(user_id, recently_added_delta_days=recently_added_delta_days)
+        return render_template("configuration_updated.html", user=user)
 
 
 def exchange_auth_token_for_refresh_token(auth_token):
@@ -67,11 +56,11 @@ def exchange_auth_token_for_refresh_token(auth_token):
     return response.json()["refresh_token"]
 
 
-def get_access_token(refresh_token):
+def get_access_token(user):
     response = requests.post(
         "https://accounts.spotify.com/api/token",
         data={
-            "refresh_token": refresh_token,
+            "refresh_token": user.refresh_token,
             "grant_type": "refresh_token",
             "client_id": constants.CLIENT_ID,
             "client_secret": constants.CLIENT_SECRET,
@@ -80,3 +69,7 @@ def get_access_token(refresh_token):
     if not response.ok:
         raise RuntimeError("Could not obtain token: ", response.content)
     return response.json()["access_token"]
+
+
+if __name__ == "__main__":
+    app.run(debug=True, port=8080)

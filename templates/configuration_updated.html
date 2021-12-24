@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}">
+    <title>Config | Success</title>
+</head>
+<body>
+    <div id="content">
+        <p>Your Details have been updated.</p>
+        <p>Thank you, {{ user.name.split(" ")[0] }}</p>
+    </div>
+
+</body>
+</html>
