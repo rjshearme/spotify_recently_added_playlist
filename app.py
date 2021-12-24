@@ -1,5 +1,6 @@
 import requests
 import urllib.parse
+import threading
 
 from flask import Flask, request, redirect, url_for, render_template
 
@@ -40,7 +41,7 @@ def settings(user_id):
     elif request.method == "POST":
         recently_added_delta_days = request.form.get("recently_added_delta_days")
         user = models.update_user(user_id, recently_added_delta_days=recently_added_delta_days)
-        playlists.generate_playlist(user)
+        threading.Thread(target=playlists.generate_playlist, args=(user,)).start()
         return render_template("settings_updated.html", user=user)
 
 
