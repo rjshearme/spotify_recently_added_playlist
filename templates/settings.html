@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}">
+    <title>Config | Edit</title>
+</head>
+<body>
+    <div id="content">
+        <form action="{{ url_for('settings', user_id=user_id) }}" method="post">
+          <h1>Settings</h1>
+          <div class="icon">
+            <i class="fas fa-user-circle"></i>
+          </div>
+            <div class="formcontainer">
+              <div class="container">
+                <label for="uname">Show me songs from the last X days</label>
+                <input type="number" placeholder="Enter number of days" name="recently_added_delta_days" required>
+              </div>
+              <button type="submit"><strong>Save</strong></button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

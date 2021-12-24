@@ -29,17 +29,17 @@ def callback():
     auth_token = request.args.get("code")
     refresh_token = exchange_auth_token_for_refresh_token(auth_token)
     user_id = models.create_user(refresh_token)
-    return redirect(url_for("configuration", user_id=user_id))
+    return redirect(url_for("settings", user_id=user_id))
 
 
-@app.route("/configuration/<user_id>", methods=["GET", "POST"])
-def configuration(user_id):
+@app.route("/settings/<user_id>", methods=["GET", "POST"])
+def settings(user_id):
     if request.method == "GET":
-        return render_template("configuration.html", user_id=user_id)
+        return render_template("settings.html", user_id=user_id)
     elif request.method == "POST":
         recently_added_delta_days = request.form.get("recently_added_delta_days")
         user = models.update_user(user_id, recently_added_delta_days=recently_added_delta_days)
-        return render_template("configuration_updated.html", user=user)
+        return render_template("settings_updated.html", user=user)
 
 
 def exchange_auth_token_for_refresh_token(auth_token):
