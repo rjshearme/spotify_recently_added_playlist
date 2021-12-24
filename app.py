@@ -5,6 +5,7 @@ from flask import Flask, request, redirect, url_for, render_template
 
 import constants
 import models
+import playlists
 
 app = Flask(__name__)
 
@@ -39,6 +40,7 @@ def settings(user_id):
     elif request.method == "POST":
         recently_added_delta_days = request.form.get("recently_added_delta_days")
         user = models.update_user(user_id, recently_added_delta_days=recently_added_delta_days)
+        playlists.generate_playlist(user)
         return render_template("settings_updated.html", user=user)
 
 
