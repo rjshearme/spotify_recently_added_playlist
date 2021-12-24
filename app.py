@@ -27,6 +27,7 @@ def auth():
 @app.route("/callback")
 def callback():
     if request.args.get("state") != constants.STATE:
+        print(request.args.get("state"), constants.STATE)
         return "Sorry, your authorisation couldn't be verified. Please try logging in again", 400
     auth_token = request.args.get("code")
     refresh_token = exchange_auth_token_for_refresh_token(auth_token)
